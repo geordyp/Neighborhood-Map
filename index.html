@@ -3,13 +3,31 @@
 <head>
     <meta charset="UTF-8">
     <title>Neighborhood Map</title>
+    <link href='https://fonts.googleapis.com/css?family=Roboto' rel='stylesheet'>
     <link rel="stylesheet" href="css/main.css">
 </head>
 <body>
     <h1>Geordy's Neighborhood Map</h1>
 
+    <!-- https://developers.google.com/maps/documentation/javascript/adding-a-google-map -->
+    <div id="map"></div>
+    <script>
+      function initMap() {
+        var uluru = {lat: -25.363, lng: 131.044};
+        var map = new google.maps.Map(document.getElementById('map'), {
+          zoom: 4,
+          center: uluru
+        });
+        var marker = new google.maps.Marker({
+          position: uluru,
+          map: map
+        });
+      }
+    </script>
+
     <script src="js/lib/knockout-3.2.0.js"></script>
     <script src="http://ajax.googleapis.com/ajax/libs/jquery/2.1.1/jquery.min.js"></script>
+    <script async defer src="https://maps.googleapis.com/maps/api/js?key=AIzaSyC5t-hmQmbEWlbaSMKcRGZQiGOsakGN0kk&callback=initMap"></script>
     <script src="js/app.js"></script>
 </body>
 </html>
