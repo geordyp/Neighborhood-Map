@@ -144,11 +144,12 @@ var ViewModel = function() {
 
   // filter the list of restaurants using the selected cuisine
   this.filterList = function() {
-    clearMarkers(this.displayMarkers);
+    clearMarkers();
 
     this.selected = $('#filterOptions').val();
     this.displayRsrtList(this.allRsrtList().filter(this.checkRsrtList));
-    // this.displayMarkers = this.allMarkers.filter(this.checkMarkerList);
+    filterMarkers(this.selected);
+    showMarkers();
   };
 
   this.checkRsrtList = function(rsrt) {
@@ -210,6 +211,15 @@ createMarkers = function() {
     });
 
     allMarkers.push(marker);
+  });
+};
+
+filterMarkers = function(option) {
+  displayMarkers = [];
+  allMarkers.forEach(function(marker) {
+    if (marker.type == option) {
+      displayMarkers.push(marker);
+    }
   });
 };
 
