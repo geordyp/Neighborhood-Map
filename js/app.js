@@ -209,6 +209,7 @@ createMarkers = function() {
 
     marker.addListener('click', function() {
       infowindow.open(map, marker);
+      toggleBounce(marker.zomato_id);
     });
 
     allMarkers.push(marker);
