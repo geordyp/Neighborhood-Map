@@ -3,31 +3,34 @@
 <head>
     <meta charset="UTF-8">
     <title>Neighborhood Map</title>
-    <link href='https://fonts.googleapis.com/css?family=Roboto' rel='stylesheet'>
+    <link href="https://fonts.googleapis.com/css?family=Roboto" rel="stylesheet">
     <link rel="stylesheet" href="css/main.css">
 </head>
 <body>
-    <h1>Geordy's Neighborhood Map</h1>
+    <div class="container">
+      <div class="leftPane">
+        <h1>Geordy's List</h1>
 
+        <select id="filterOptions" data-bind="foreach: filterOptions">
+          <option data-bind="text: name"></option>
+        </select>
+        <button id="filterBtn" data-bind="click: filterList">filter</button>
+        <button id="clearFilterBtn" data-bind="click: clearFilter">clear</button>
+
+        <ul id="list" data-bind="foreach: displayRsrtList">
+          <li id="listItem" data-bind="text: name, click: $parent.setRsrt"></li>
+        </ul>
+        <div id="footer">Powered by <a href="https://maps.google.com/">Google Maps</a> and <a href="www.zomato.com">Zomato</a></div>
+      </div>
+      <div class="rightPane">
+        <div id="map"></div>
+      </div>
+    </div>
     <!-- https://developers.google.com/maps/documentation/javascript/adding-a-google-map -->
-    <div id="map"></div>
-    <script>
-      function initMap() {
-        var uluru = {lat: -25.363, lng: 131.044};
-        var map = new google.maps.Map(document.getElementById('map'), {
-          zoom: 4,
-          center: uluru
-        });
-        var marker = new google.maps.Marker({
-          position: uluru,
-          map: map
-        });
-      }
-    </script>
 
     <script src="js/lib/knockout-3.2.0.js"></script>
     <script src="http://ajax.googleapis.com/ajax/libs/jquery/2.1.1/jquery.min.js"></script>
-    <script async defer src="https://maps.googleapis.com/maps/api/js?key=AIzaSyC5t-hmQmbEWlbaSMKcRGZQiGOsakGN0kk&callback=initMap"></script>
     <script src="js/app.js"></script>
+    <script async defer src="https://maps.googleapis.com/maps/api/js?key=AIzaSyC5t-hmQmbEWlbaSMKcRGZQiGOsakGN0kk&callback=initMap"></script>
 </body>
 </html>
