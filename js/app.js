@@ -122,25 +122,6 @@ var ViewModel = function() {
   this.setRsrt = function(clickedRsrt) {
     self.currentRsrt(clickedRsrt);
     toggleBounce(self.currentRsrt().zomato_id());
-
-    // // we need to get the zomato_id so we can more efficiently use the api
-    // var zomatoUrl = "https://developers.zomato.com/api/v2.1/search?entity_id=Manhattan&entity_type=city&q=" + this.name;
-    // $.ajax({
-    //   url: zomatoUrl,
-    //   beforeSend: function(xhr) {
-    //        xhr.setRequestHeader("user-key", "a421d04cada88f728243c4ad9924a9dd");
-    //   }, success: function(data){
-    //       console.log(name);
-    //       data.restaurants.forEach(function(entry) {
-    //         if (entry.restaurant.name === name) {
-    //           this.zomato_id = entry.restaurant.id;
-    //           console.log(entry.restaurant.name);
-    //           console.log(this.zomato_id);
-    //         }
-    //       });
-    //       //process the JSON data etc
-    //   }
-    // });
   }
 
   // filter the list of restaurants using the selected cuisine
@@ -199,21 +180,45 @@ createMarkers = function() {
       type: restaurant.type
     });
 
-    var contentString = '<div id="infowindow>"' +
-                        '<p><b>' + restaurant.name + '</b></p>' +
-                        '</div>';
-
-    var infowindow = new google.maps.InfoWindow({
-      content: contentString
-    });
-
     marker.addListener('click', function() {
-      infowindow.open(map, marker);
+      // we need to get the zomato_id so we can more efficiently use the api
+      var zomatoUrl = "https://developers.zomato.com/api/v2.1/restaurant?res_id=" + marker.zomato_id;
+      var reviewData = {};
+      $.ajax({
+        url: zomatoUrl,
+        beforeSend: function(xhr) {
+             xhr.setRequestHeader("user-key", "a421d04cada88f728243c4ad9924a9dd");
+        }, success: function(data){
+            reviewData = data.user_rating;
+            priceNum = data.price_range;
+            priceStr = ""
+            for (i = 0; i < priceNum; i++) {
+              priceStr += "$";
+            }
+
+            var contentString = '<div id="infowindow>"' +
+                                '<p><b>' + restaurant.name + '</b></p>' +
+                                '<p><b>Aggregate Rating:&nbsp;&nbsp;</b>' + reviewData.aggregate_rating + '&nbsp;(' + reviewData.rating_text + ')</p>' +
+                                '<p><b>Price Range:&nbsp;&nbsp;</b>' + priceStr + '</p>' +
+                                '</div>';
+
+            var infowindow = new google.maps.InfoWindow({
+              content: contentString
+            });
+
+            infowindow.open(map, marker);
+        }
+      });
+
       toggleBounce(marker.zomato_id);
     });
 
     allMarkers.push(marker);
   });
+};
+
+getContentById = function(zomato_id) {
+  return "got it";
 };
 
 filterMarkers = function(option) {
