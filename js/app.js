@@ -73,29 +73,10 @@ var restaurants = [
 
 var Restaurant = function(data) {
   this.name = ko.observable(data.name);
-  this.zomato_id = ko.observable(data.id);
+  this.zomato_id = ko.observable(data.zomato_id);
   this.type = ko.observable(data.type);
   this.lat = ko.observable(data.lat);
   this.lng = ko.observable(data.lng);
-
-  // // we need to get the zomato_id so we can more efficiently use the api
-  // var zomatoUrl = "https://developers.zomato.com/api/v2.1/search?entity_id=Manhattan&entity_type=city&q=" + this.name;
-  // $.ajax({
-  //   url: zomatoUrl,
-  //   beforeSend: function(xhr) {
-  //        xhr.setRequestHeader("user-key", "a421d04cada88f728243c4ad9924a9dd");
-  //   }, success: function(data){
-  //       console.log(name);
-  //       data.restaurants.forEach(function(entry) {
-  //         if (entry.restaurant.name === name) {
-  //           this.zomato_id = entry.restaurant.id;
-  //           console.log(entry.restaurant.name);
-  //           console.log(this.zomato_id);
-  //         }
-  //       });
-  //       //process the JSON data etc
-  //   }
-  // });
 }
 
 var ViewModel = function() {
@@ -140,6 +121,26 @@ var ViewModel = function() {
 
   this.setRsrt = function(clickedRsrt) {
     self.currentRsrt(clickedRsrt);
+    toggleBounce(self.currentRsrt().zomato_id());
+
+    // // we need to get the zomato_id so we can more efficiently use the api
+    // var zomatoUrl = "https://developers.zomato.com/api/v2.1/search?entity_id=Manhattan&entity_type=city&q=" + this.name;
+    // $.ajax({
+    //   url: zomatoUrl,
+    //   beforeSend: function(xhr) {
+    //        xhr.setRequestHeader("user-key", "a421d04cada88f728243c4ad9924a9dd");
+    //   }, success: function(data){
+    //       console.log(name);
+    //       data.restaurants.forEach(function(entry) {
+    //         if (entry.restaurant.name === name) {
+    //           this.zomato_id = entry.restaurant.id;
+    //           console.log(entry.restaurant.name);
+    //           console.log(this.zomato_id);
+    //         }
+    //       });
+    //       //process the JSON data etc
+    //   }
+    // });
   }
 
   // filter the list of restaurants using the selected cuisine
@@ -194,6 +195,7 @@ createMarkers = function() {
     var marker = new google.maps.Marker({
       position: {lat: restaurant.lat, lng: restaurant.lng},
       map: null,
+      zomato_id: restaurant.zomato_id,
       type: restaurant.type
     });
 
@@ -240,3 +242,28 @@ setMapOnAll = function(map) {
     displayMarkers[i].setMap(map);
   }
 };
+
+getMarkerById = function(id) {
+  var m = null;
+  displayMarkers.forEach(function (marker) {
+    // console.log(marker.zomato_id + " - " + id);
+    if (marker.zomato_id === id) {
+      m = marker;
+    }
+  });
+
+  return m;
+}
+
+toggleBounce = function(rsrtClicked) {
+  displayMarkers.forEach(function (marker) {
+    marker.setAnimation(null);
+  });
+
+  var marker = getMarkerById(rsrtClicked);
+  if (marker.getAnimation() !== null) {
+    marker.setAnimation(null);
+  } else {
+    marker.setAnimation(google.maps.Animation.BOUNCE);
+  }
+}
