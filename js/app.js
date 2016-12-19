@@ -152,18 +152,18 @@ var ViewModel = function() {
     showMarkers();
   };
 
+  this.clearFilter = function() {
+    this.displayRsrtList(this.allRsrtList());
+    this.displayMarkers = this.allMarkers;
+    showAllMarkers();
+  };
+
   this.checkRsrtList = function(rsrt) {
     return rsrt.type() == self.selected;
   };
 
   this.checkMarkerList = function(marker) {
     return marker.type == self.selected;
-  }
-
-  this.clearFilter = function() {
-    this.displayRsrtList(this.allRsrtList());
-    this.displayMarkers = this.allMarkers;
-    showMarkers(this.map, this.displayMarkers);
   };
 }
 
@@ -186,8 +186,7 @@ initMap = function() {
   });
 
   createMarkers();
-  displayMarkers = allMarkers;
-  showMarkers();
+  showAllMarkers();
 };
 
 createMarkers = function() {
@@ -225,6 +224,11 @@ filterMarkers = function(option) {
 
 clearMarkers = function() {
   setMapOnAll(null);
+};
+
+showAllMarkers = function() {
+  displayMarkers = allMarkers;
+  showMarkers();
 };
 
 showMarkers = function() {
