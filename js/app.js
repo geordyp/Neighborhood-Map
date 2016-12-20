@@ -181,38 +181,9 @@ createMarkers = function() {
     });
 
     marker.addListener('click', function() {
-      // we need to get the zomato_id so we can more efficiently use the api
-      var zomatoUrl = "https://developers.zomato.com/api/v2.1/restaurant?res_id=" + marker.zomato_id;
-      var reviewData = {};
-      $.ajax({
-        url: zomatoUrl,
-        beforeSend: function(xhr) {
-             xhr.setRequestHeader("user-key", "a421d04cada88f728243c4ad9924a9dd");
-        }, success: function(data){
-            reviewData = data.user_rating;
-            priceNum = data.price_range;
-            priceStr = ""
-            for (i = 0; i < priceNum; i++) {
-              priceStr += "$";
-            }
-
-            var contentString = '<div id="infowindow>"' +
-                                '<p><b>' + restaurant.name + '</b></p>' +
-                                '<p><b>Aggregate Rating:&nbsp;&nbsp;</b>' + reviewData.aggregate_rating + '&nbsp;(' + reviewData.rating_text + ')</p>' +
-                                '<p><b>Price Range:&nbsp;&nbsp;</b>' + priceStr + '</p>' +
-                                '</div>';
-
-            var infowindow = new google.maps.InfoWindow({
-              content: contentString
-            });
-
-            infowindow.open(map, marker);
-        }
-      });
-
-      toggleBounce(marker.zomato_id);
+      openInfoWindow(restaurant, marker);
     });
-
+    
     allMarkers.push(marker);
   });
 };
@@ -260,6 +231,39 @@ getMarkerById = function(id) {
 
   return m;
 }
+
+openInfoWindow = function(restaurant, marker) {
+  // we need to get the zomato_id so we can more efficiently use the api
+  var zomatoUrl = "https://developers.zomato.com/api/v2.1/restaurant?res_id=" + marker.zomato_id;
+  var reviewData = {};
+  $.ajax({
+    url: zomatoUrl,
+    beforeSend: function(xhr) {
+         xhr.setRequestHeader("user-key", "a421d04cada88f728243c4ad9924a9dd");
+    }, success: function(data){
+        reviewData = data.user_rating;
+        priceNum = data.price_range;
+        priceStr = ""
+        for (i = 0; i < priceNum; i++) {
+          priceStr += "$";
+        }
+
+        var contentString = '<div id="infowindow>"' +
+                            '<p><b>' + restaurant.name + '</b></p>' +
+                            '<p><b>Aggregate Rating:&nbsp;&nbsp;</b>' + reviewData.aggregate_rating + '&nbsp;(' + reviewData.rating_text + ')</p>' +
+                            '<p><b>Price Range:&nbsp;&nbsp;</b>' + priceStr + '</p>' +
+                            '</div>';
+
+        var infowindow = new google.maps.InfoWindow({
+          content: contentString
+        });
+
+        infowindow.open(map, marker);
+    }
+  });
+
+  toggleBounce(marker.zomato_id);
+};
 
 toggleBounce = function(rsrtClicked) {
   displayMarkers.forEach(function (marker) {
