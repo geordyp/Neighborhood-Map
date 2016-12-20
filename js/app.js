@@ -179,6 +179,12 @@ initMap = function() {
   showAllMarkers();
 };
 
+mapsFailedToLoad = function() {
+  map = document.getElementById('map');
+  map.className += 'error';
+  map.innerHTML = 'Failed to load Google Maps';
+};
+
 // creates markers for the map
 createMarkers = function() {
   restaurants.forEach(function(restaurant) {
