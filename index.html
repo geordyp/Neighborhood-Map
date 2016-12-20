@@ -12,17 +12,24 @@
 <body>
     <div class="container">
       <div class="leftPane">
-        <h1>Good Eats</h1>
+        <header>
+          <h1>Good Eats</h1>
+        </header>
 
-        <select id="filterOptions" data-bind="options: filterOptions, value: selectedOption">
-        </select>
-        <button id="filterBtn" data-bind="click: filterBtnClicked">filter</button>
-        <button id="clearFilterBtn" data-bind="click: clearFilterBtnClicked">clear</button>
+        <nav>
+          <select id="filterOptions" data-bind="options: filterOptions, value: selectedOption">
+          </select>
+          <button id="filterBtn" data-bind="click: filterBtnClicked">filter</button>
+          <button id="clearFilterBtn" data-bind="click: clearFilterBtnClicked">clear</button>
 
-        <ul id="list" data-bind="foreach: displayRsrtList">
-          <li id="listItem" data-bind="text: name, click: $parent.rsrtClicked"></li>
-        </ul>
-        <div id="footer">Powered by <a href="https://developers.google.com/maps/">Google Maps</a> and <a href="https://developers.zomato.com/">Zomato</a></div>
+          <ul id="list" data-bind="foreach: displayRsrtList">
+            <li id="listItem" data-bind="text: name, click: $parent.rsrtClicked"></li>
+          </ul>
+        </nav>
+
+        <footer>
+          <div id="footer">Powered by <a href="https://developers.google.com/maps/">Google Maps</a> and <a href="https://developers.zomato.com/">Zomato</a></div>
+        </footer>
       </div>
       <div class="rightPane">
         <div id="map"><p style="color:red; font-size:24px;"><b>Failed to load Google Maps.</p></b></div>

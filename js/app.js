@@ -72,11 +72,11 @@ var restaurants = [
 ];
 
 var Restaurant = function(data) {
-  this.name = ko.observable(data.name);
-  this.zomato_id = ko.observable(data.zomato_id);
-  this.type = ko.observable(data.type);
-  this.lat = ko.observable(data.lat);
-  this.lng = ko.observable(data.lng);
+  this.name = data.name;
+  this.zomato_id = data.zomato_id;
+  this.type = data.type;
+  this.lat = data.lat;
+  this.lng = data.lng;
 }
 
 var ViewModel = function() {
@@ -104,7 +104,7 @@ var ViewModel = function() {
     });
 
     // insuring there are no repeats in the list
-    if (found == false) {
+    if (found === false) {
       this.filterOptions.push(type);
     }
   };
@@ -123,9 +123,9 @@ var ViewModel = function() {
 
   // handles when the user selects a restaurant from the list
   this.rsrtClicked = function(clickedRsrt) {
-    toggleBounce(clickedRsrt.zomato_id());
-    openInfoWindow(getMarkerById(clickedRsrt.zomato_id()));
-  }
+    toggleBounce(clickedRsrt.zomato_id);
+    openInfoWindow(getMarkerById(clickedRsrt.zomato_id));
+  };
 
   // handles when the user clicks the filter button
   this.filterBtnClicked = function() {
@@ -148,20 +148,22 @@ var ViewModel = function() {
 
   // check if restaurant list item is of the selected type
   this.checkRsrtList = function(rsrt) {
-    return rsrt.type() == self.selectedOption();
+    return rsrt.type == self.selectedOption();
   };
 }
 
-ko.applyBindings(new ViewModel())
+ko.applyBindings(new ViewModel());
 
 // the google map
-map = {};
+var map = {};
 
 // complete list of markers
-allMarkers = [];
+var allMarkers = [];
 
 // list of markers to display
-displayMarkers = [];
+var displayMarkers = [];
+
+var infowindow = {};
 
 // sets up the Google Map
 initMap = function() {
@@ -170,6 +172,8 @@ initMap = function() {
     zoom: 17,
     center: loc
   });
+
+  infowindow = new google.maps.InfoWindow({content: ""});
 
   createMarkers();
   showAllMarkers();
@@ -248,23 +252,32 @@ openInfoWindow = function(marker) {
     beforeSend: function(xhr) {
          xhr.setRequestHeader("user-key", "a421d04cada88f728243c4ad9924a9dd");
     }, success: function(data) {
-        priceStr = ""
-        for (i = 0; i < data.price_range; i++) {
-          priceStr += "$";
+        !!data.name ? name = data.name : name = "No name available";
+        !!data.user_rating.aggregate_rating ?
+          agg_rating = data.user_rating.aggregate_rating :
+          agg_rating = "No aggregate rating available";
+        !!data.user_rating.rating_text ?
+          rating_text = "(" + data.user_rating.rating_text + ")" :
+          rating_text = "";
+        if (!!data.price_range) {
+          price_range = "";
+          for (i = 0; i < data.price_range; i++) {
+            price_range += "$";
+          }
+        }
+        else {
+          price_range = "No price range available";
         }
 
+
         var contentString = '<div id="infowindow>"' +
-                            '<p><b>' + data.name + '</b></p>' +
+                            '<p><b>' + name + '</b></p>' +
                             '<p><b>Aggregate Rating:&nbsp;&nbsp;</b>' +
-                            data.user_rating.aggregate_rating + '&nbsp;(' +
-                            data.user_rating.rating_text + ')</p>' +
-                            '<p><b>Price Range:&nbsp;&nbsp;</b>' + priceStr +
-                            '</p></div>';
+                            agg_rating + '&nbsp;' + rating_text + '</p>' +
+                            '<p><b>Price Range:&nbsp;&nbsp;</b>' +
+                            price_range + '</p></div>';
 
-        var infowindow = new google.maps.InfoWindow({
-          content: contentString
-        });
-
+        infowindow.setContent(contentString);
         infowindow.open(map, marker);
     }, error: function() {
         var contentString = '<div id="infowindow>"' +
@@ -272,10 +285,7 @@ openInfoWindow = function(marker) {
                             'Failed to load restaurant data from Zomato.' +
                             '</b></p></div>';
 
-        var infowindow = new google.maps.InfoWindow({
-          content: contentString
-        });
-
+        infowindow.setContent(contentString);
         infowindow.open(map, marker);
     }
   });
@@ -296,4 +306,4 @@ toggleBounce = function(rsrtClicked) {
   } else {
     marker.setAnimation(google.maps.Animation.BOUNCE);
   }
-}
+};
