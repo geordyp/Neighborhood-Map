@@ -1,18 +1,20 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <meta charset="UTF-8">
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
     <title>Neighborhood Map</title>
     <link href="https://fonts.googleapis.com/css?family=Roboto" rel="stylesheet">
     <link rel="stylesheet" href="css/main.css">
 </head>
+
 <body>
     <div class="container">
       <div class="leftPane">
         <h1>Good Eats</h1>
 
-        <select id="filterOptions" data-bind="foreach: filterOptions">
-          <option data-bind="text: name"></option>
+        <select id="filterOptions" data-bind="options: filterOptions, value: selectedOption">
         </select>
         <button id="filterBtn" data-bind="click: filterBtnClicked">filter</button>
         <button id="clearFilterBtn" data-bind="click: clearFilterBtnClicked">clear</button>

@@ -91,18 +91,21 @@ var ViewModel = function() {
   // list of cuisine options, used for filter
   this.filterOptions = ko.observableArray([]);
 
+  // the filter the user has selected
+  this.selectedOption = ko.observable();
+
   // adds cuisine options to filterOptions list
   this.addToFilterOptions = function(type) {
     var found = false;
     this.filterOptions().forEach(function(option) {
-      if (option.name == type) {
+      if (option == type) {
         found = true;
       }
     });
 
     // insuring there are no repeats in the list
     if (found == false) {
-      this.filterOptions.push({name: type});
+      this.filterOptions.push(type);
     }
   };
 
@@ -129,12 +132,9 @@ var ViewModel = function() {
     // remove all markers
     clearMarkers();
 
-    // get the user's selection
-    this.selected = $('#filterOptions').val();
-
     // filter the restaurant list and markers
     this.displayRsrtList(this.allRsrtList().filter(this.checkRsrtList));
-    filterMarkers(this.selected);
+    filterMarkers(this.selectedOption());
     showMarkers();
   };
 
@@ -148,7 +148,7 @@ var ViewModel = function() {
 
   // check if restaurant list item is of the selected type
   this.checkRsrtList = function(rsrt) {
-    return rsrt.type() == self.selected;
+    return rsrt.type() == self.selectedOption();
   };
 }
 
