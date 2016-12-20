@@ -14,20 +14,18 @@
         <select id="filterOptions" data-bind="foreach: filterOptions">
           <option data-bind="text: name"></option>
         </select>
-        <button id="filterBtn" data-bind="click: filterList">filter</button>
-        <button id="clearFilterBtn" data-bind="click: clearFilter">clear</button>
+        <button id="filterBtn" data-bind="click: filterBtnClicked">filter</button>
+        <button id="clearFilterBtn" data-bind="click: clearFilterBtnClicked">clear</button>
 
         <ul id="list" data-bind="foreach: displayRsrtList">
-          <li id="listItem" data-bind="text: name, click: $parent.setRsrt"></li>
+          <li id="listItem" data-bind="text: name, click: $parent.rsrtClicked"></li>
         </ul>
         <div id="footer">Powered by <a href="https://developers.google.com/maps/">Google Maps</a> and <a href="https://developers.zomato.com/">Zomato</a></div>
       </div>
       <div class="rightPane">
-        <div id="map"></div>
+        <div id="map"><p style="color:red; font-size:24px;"><b>Failed to load Google Maps.</p></b></div>
       </div>
     </div>
-
-    <!-- https://developers.google.com/maps/documentation/javascript/adding-a-google-map -->
 
     <script src="js/lib/knockout-3.2.0.js"></script>
     <script src="http://ajax.googleapis.com/ajax/libs/jquery/2.1.1/jquery.min.js"></script>

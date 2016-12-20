@@ -115,38 +115,40 @@ var ViewModel = function() {
     self.addToFilterOptions(rsrt.type);
   });
 
-  // set the currently selected restaurant
-  this.currentRsrt = ko.observable(this.allRsrtList()[0]);
+  // by default, all restaurants will be visible
   this.displayRsrtList(this.allRsrtList());
 
-  this.setRsrt = function(clickedRsrt) {
-    self.currentRsrt(clickedRsrt);
-    toggleBounce(self.currentRsrt().zomato_id());
-    openInfoWindow(getMarkerById(self.currentRsrt().zomato_id()));
+  // handles when the user selects a restaurant from the list
+  this.rsrtClicked = function(clickedRsrt) {
+    toggleBounce(clickedRsrt.zomato_id());
+    openInfoWindow(getMarkerById(clickedRsrt.zomato_id()));
   }
 
-  // filter the list of restaurants using the selected cuisine
-  this.filterList = function() {
+  // handles when the user clicks the filter button
+  this.filterBtnClicked = function() {
+    // remove all markers
     clearMarkers();
 
+    // get the user's selection
     this.selected = $('#filterOptions').val();
+
+    // filter the restaurant list and markers
     this.displayRsrtList(this.allRsrtList().filter(this.checkRsrtList));
     filterMarkers(this.selected);
     showMarkers();
   };
 
-  this.clearFilter = function() {
+  // handles when the user clicks the clear filter button
+  this.clearFilterBtnClicked = function() {
+    // reset the restaurant list and markers so they display all
     this.displayRsrtList(this.allRsrtList());
     this.displayMarkers = this.allMarkers;
     showAllMarkers();
   };
 
+  // check if restaurant list item is of the selected type
   this.checkRsrtList = function(rsrt) {
     return rsrt.type() == self.selected;
-  };
-
-  this.checkMarkerList = function(marker) {
-    return marker.type == self.selected;
   };
 }
 
@@ -161,6 +163,7 @@ allMarkers = [];
 // list of markers to display
 displayMarkers = [];
 
+// sets up the Google Map
 initMap = function() {
   var loc = {lat: 39.185353, lng: -96.574970};
   map = new google.maps.Map(document.getElementById('map'), {
@@ -172,6 +175,7 @@ initMap = function() {
   showAllMarkers();
 };
 
+// creates markers for the map
 createMarkers = function() {
   restaurants.forEach(function(restaurant) {
     var marker = new google.maps.Marker({
@@ -189,10 +193,7 @@ createMarkers = function() {
   });
 };
 
-getContentById = function(zomato_id) {
-  return "got it";
-};
-
+// filters the markers that will be displayed
 filterMarkers = function(option) {
   displayMarkers = [];
   allMarkers.forEach(function(marker) {
@@ -202,29 +203,33 @@ filterMarkers = function(option) {
   });
 };
 
+// clears the markers from the map
 clearMarkers = function() {
   setMapOnAll(null);
 };
 
+// shows all the markers on the map
 showAllMarkers = function() {
   displayMarkers = allMarkers;
   showMarkers();
 };
 
+// shows the markers in the displayMarkers list
 showMarkers = function() {
   setMapOnAll(map);
 };
 
+// set the map property of each marker, displaying it on the map
 setMapOnAll = function(map) {
   for (var i = 0; i < displayMarkers.length; i++) {
     displayMarkers[i].setMap(map);
   }
 };
 
+// returns a marker with the given unique id
 getMarkerById = function(id) {
   var m = null;
   displayMarkers.forEach(function (marker) {
-    // console.log(marker.zomato_id + " - " + id);
     if (marker.zomato_id === id) {
       m = marker;
     }
@@ -233,28 +238,39 @@ getMarkerById = function(id) {
   return m;
 }
 
+// opens an info window above the given marker
 openInfoWindow = function(marker) {
-  // we need to get the zomato_id so we can more efficiently use the api
-  var zomatoUrl = "https://developers.zomato.com/api/v2.1/restaurant?res_id=" + marker.zomato_id;
+  var zomatoUrl = "https://developers.zomato.com/api/v2.1/restaurant?res_id=" +
+                  marker.zomato_id;
   var reviewData = {};
   $.ajax({
     url: zomatoUrl,
     beforeSend: function(xhr) {
          xhr.setRequestHeader("user-key", "a421d04cada88f728243c4ad9924a9dd");
-    }, success: function(data){
-        name = data.name;
-        reviewData = data.user_rating;
-        priceNum = data.price_range;
+    }, success: function(data) {
         priceStr = ""
-        for (i = 0; i < priceNum; i++) {
+        for (i = 0; i < data.price_range; i++) {
           priceStr += "$";
         }
 
         var contentString = '<div id="infowindow>"' +
-                            '<p><b>' + name + '</b></p>' +
-                            '<p><b>Aggregate Rating:&nbsp;&nbsp;</b>' + reviewData.aggregate_rating + '&nbsp;(' + reviewData.rating_text + ')</p>' +
-                            '<p><b>Price Range:&nbsp;&nbsp;</b>' + priceStr + '</p>' +
-                            '</div>';
+                            '<p><b>' + data.name + '</b></p>' +
+                            '<p><b>Aggregate Rating:&nbsp;&nbsp;</b>' +
+                            data.user_rating.aggregate_rating + '&nbsp;(' +
+                            data.user_rating.rating_text + ')</p>' +
+                            '<p><b>Price Range:&nbsp;&nbsp;</b>' + priceStr +
+                            '</p></div>';
+
+        var infowindow = new google.maps.InfoWindow({
+          content: contentString
+        });
+
+        infowindow.open(map, marker);
+    }, error: function() {
+        var contentString = '<div id="infowindow>"' +
+                            '<p style="color:red;"><b>' +
+                            'Failed to load restaurant data from Zomato.' +
+                            '</b></p></div>';
 
         var infowindow = new google.maps.InfoWindow({
           content: contentString
@@ -267,7 +283,9 @@ openInfoWindow = function(marker) {
   toggleBounce(marker.zomato_id);
 };
 
+// animates the marker selected marker
 toggleBounce = function(rsrtClicked) {
+  // stop any other markers from animating
   displayMarkers.forEach(function (marker) {
     marker.setAnimation(null);
   });
