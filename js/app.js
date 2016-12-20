@@ -122,6 +122,7 @@ var ViewModel = function() {
   this.setRsrt = function(clickedRsrt) {
     self.currentRsrt(clickedRsrt);
     toggleBounce(self.currentRsrt().zomato_id());
+    openInfoWindow(getMarkerById(self.currentRsrt().zomato_id()));
   }
 
   // filter the list of restaurants using the selected cuisine
@@ -181,9 +182,9 @@ createMarkers = function() {
     });
 
     marker.addListener('click', function() {
-      openInfoWindow(restaurant, marker);
+      openInfoWindow(marker);
     });
-    
+
     allMarkers.push(marker);
   });
 };
@@ -232,7 +233,7 @@ getMarkerById = function(id) {
   return m;
 }
 
-openInfoWindow = function(restaurant, marker) {
+openInfoWindow = function(marker) {
   // we need to get the zomato_id so we can more efficiently use the api
   var zomatoUrl = "https://developers.zomato.com/api/v2.1/restaurant?res_id=" + marker.zomato_id;
   var reviewData = {};
@@ -241,6 +242,7 @@ openInfoWindow = function(restaurant, marker) {
     beforeSend: function(xhr) {
          xhr.setRequestHeader("user-key", "a421d04cada88f728243c4ad9924a9dd");
     }, success: function(data){
+        name = data.name;
         reviewData = data.user_rating;
         priceNum = data.price_range;
         priceStr = ""
@@ -249,7 +251,7 @@ openInfoWindow = function(restaurant, marker) {
         }
 
         var contentString = '<div id="infowindow>"' +
-                            '<p><b>' + restaurant.name + '</b></p>' +
+                            '<p><b>' + name + '</b></p>' +
                             '<p><b>Aggregate Rating:&nbsp;&nbsp;</b>' + reviewData.aggregate_rating + '&nbsp;(' + reviewData.rating_text + ')</p>' +
                             '<p><b>Price Range:&nbsp;&nbsp;</b>' + priceStr + '</p>' +
                             '</div>';
