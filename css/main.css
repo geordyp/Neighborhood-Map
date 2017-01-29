@@ -1,8 +1,22 @@
 body {
-  background-color: #f2faff;
+  background-color: #fff;
   font-family: 'Roboto', sans-serif;
   margin: 0;
   padding: 0;
+}
+
+h1 {
+  color: #293241;
+}
+
+a {
+  text-decoration: none;
+  color: #57B8ff;
+}
+
+a:hover {
+  cursor: pointer;
+  color: #d33f49;
 }
 
 .container {
@@ -15,13 +29,31 @@ body {
 
 .leftPane {
   height: 100%;
-  width: 230px;
+  width: 0;
+  position: fixed;
+  z-index: 1;
+  top: 0;
+  left: 0;
+  overflow-x: hidden;
+  transition: 0.5s;
+  padding-top: 10px;
+}
+
+.close-btn {
+  font-size: 26px;
+}
+
+.close-btn,
+header,
+nav,
+footer {
   padding-left: 20px;
 }
 
 .rightPane {
+  transition: margin-left .5s;
   height: 100%;
-  width: calc(100% - 250px);
+  width: 100%;
 }
 
 .error {
