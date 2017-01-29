@@ -22,7 +22,6 @@ a:hover {
 .container {
   height: 100vh;
   width: 100vw;
-  min-width: 500px;
   display: flex;
   flex-wrap: wrap;
 }
@@ -31,11 +30,11 @@ a:hover {
   height: 100%;
   width: 0;
   position: fixed;
-  z-index: 1;
   top: 0;
   left: 0;
+  z-index: 1;
   overflow-x: hidden;
-  transition: 0.5s;
+  transition: .5s;
   padding-top: 10px;
 }
 
@@ -56,12 +55,30 @@ footer {
   width: 100%;
 }
 
+#menu {
+  position: absolute;
+  background-color: white;
+  line-height: .9;
+  padding: 3px;
+  z-index: 10;
+  font-size: 26px;
+  transition: .5s;
+  top: 50vh;
+  left: 10px;
+}
+
 .error {
   position: relative;
   top: 30px;
   left: 10px;
   color: red;
   font-size: 24px;
+}
+
+footer {
+  position: absolute;
+  bottom: 30px;
+  font-size: 12px;
 }
 
 #map {
@@ -75,12 +92,6 @@ footer {
 
 #listItem {
   margin-top: 10px;
-}
-
-#footer {
-  position: relative;
-  top: 100px;
-  font-size: 12px;
 }
 
 #infowindow_h {
