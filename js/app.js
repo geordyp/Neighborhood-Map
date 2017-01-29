@@ -314,14 +314,14 @@ toggleBounce = function(rsrtClicked) {
   }
 };
 
-function openNav() {
+openNav = function() {
     document.getElementById("sidenav").style.width = "250px";
     document.getElementById("main").style.marginLeft = "250px";
     document.getElementById("menu").style.left = "260px";
     document.getElementById("menu").style.visibility = "hidden";
 }
 
-function closeNav() {
+closeNav = function() {
     document.getElementById("sidenav").style.width = "0";
     document.getElementById("main").style.marginLeft= "0";
     document.getElementById("menu").style.left = "10px";
